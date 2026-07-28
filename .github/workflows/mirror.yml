@@ -19,8 +19,8 @@ permissions:
   contents: read
 
 env:
-  R2_BUCKET_NAME: codex-app-mirror
-  R2_PUBLIC_BASE_URL: https://codexapp.agentsmirror.com
+  GITHUB_RELEASE_ONLY: "true"
+  R2_PUBLIC_BASE_URL: https://github.com/Duojiyi/codex-app-mirror/releases/latest/download
 
 concurrency:
   group: codex-app-mirror
@@ -292,6 +292,7 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Checkout agents-mirror-kit
+        if: ${{ false }}
         uses: actions/checkout@v6
         with:
           repository: Wangnov/agents-mirror-kit
@@ -328,7 +329,7 @@ jobs:
         id: meta
         env:
           RELEASE_TAG: ${{ needs.probe.outputs.release_tag }}
-          INHERIT_LATEST_FROM_MIRROR: "true"
+          INHERIT_LATEST_FROM_MIRROR: "false"
         shell: bash
         run: |
           set -euo pipefail
@@ -569,7 +570,7 @@ jobs:
           fi
 
       - name: Remove latest links from previous release notes
-        if: steps.meta.outputs.sync_latest == 'true' && needs.probe.outputs.latest_tag != '' && needs.probe.outputs.latest_tag != steps.meta.outputs.tag
+        if: ${{ false }}
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
@@ -579,7 +580,7 @@ jobs:
         run: bash .mirror-kit/scripts/remove-latest-links-from-release-notes.sh "$LATEST_TAG"
 
       - name: Ensure AWS CLI
-        if: steps.meta.outputs.sync_latest == 'true'
+        if: ${{ false }}
         shell: bash
         run: |
           set -euo pipefail
@@ -589,7 +590,7 @@ jobs:
           fi
 
       - name: Sync GitHub Release assets to Cloudflare R2
-        if: steps.meta.outputs.sync_latest == 'true'
+        if: ${{ false }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
@@ -816,7 +817,7 @@ jobs:
             appcast-x64.xml
 
       - name: Trigger Cloudflare secondary S3 sync
-        if: steps.meta.outputs.sync_latest == 'true'
+        if: ${{ false }}
         env:
           CF_SECONDARY_SYNC_URL: ${{ secrets.CF_SECONDARY_SYNC_URL }}
           CF_SECONDARY_SYNC_TOKEN: ${{ secrets.CF_SECONDARY_SYNC_TOKEN }}
@@ -845,6 +846,7 @@ jobs:
           echo "$VERSION_SUMMARY"
 
       - name: Reconcile Cloudflare secondary S3 sync
+        if: ${{ false }}
         env:
           CF_SECONDARY_SYNC_URL: ${{ secrets.CF_SECONDARY_SYNC_URL }}
           CF_SECONDARY_SYNC_TOKEN: ${{ secrets.CF_SECONDARY_SYNC_TOKEN }}

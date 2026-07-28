@@ -774,6 +774,10 @@ public_mirror_latest_matches() {
   local manifest="$1"
   local tag="$2"
 
+  if [[ "${GITHUB_RELEASE_ONLY:-false}" == "true" ]]; then
+    return 0
+  fi
+
   public_mirror_manifest_key_matches "$manifest" &&
     public_mirror_appcasts_match "$manifest" &&
     public_mirror_checksums_match "$manifest" &&
