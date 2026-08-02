@@ -371,6 +371,31 @@ chmod +x "$tmp_dir/bin/curl"
 grep -F "should_release=false" "$tmp_dir/output.txt"
 grep -F "public mirror latest already matches current sources; GitHub latest remains $latest_tag until all architectures are complete" "$tmp_dir/output.txt"
 test "$(jq -r '.sources.windows.architectures.arm64.status' "$tmp_dir/probe-manifest.json")" = "catalog-only"
+
+# GitHub-release-only mode has no external latest/* aliases to compare. A source
+# manifest that differs from the latest GitHub Release must therefore publish,
+# not inherit the alias-repair no-op path.
+(
+  cd "$repo_root"
+  PATH="$tmp_dir/bin:$PATH" \
+  GITHUB_RELEASE_ONLY=true \
+  TEST_GH_LOG="$gh_log" \
+  TEST_LATEST_TAG="$latest_tag" \
+  TEST_LATEST_MANIFEST="$tmp_dir/latest-release-manifest.json" \
+  TEST_PUBLIC_MANIFEST="$tmp_dir/public-manifest.json" \
+  TEST_PUBLIC_CHECKSUMS="$tmp_dir/public-SHA256SUMS.txt" \
+  TEST_PUBLIC_APPCAST="$tmp_dir/public-appcast.xml" \
+  TEST_PUBLIC_APPCAST_X64="$tmp_dir/public-appcast-x64.xml" \
+  STORE_LINK_MAX_ATTEMPTS=1 \
+  MANIFEST_PATH="$tmp_dir/probe-github-release-only-manifest.json" \
+    scripts/probe-release.sh > "$tmp_dir/github-release-only-output.txt"
+)
+
+grep -F "should_release=true" "$tmp_dir/github-release-only-output.txt"
+if grep -F "public mirror latest already matches current sources" "$tmp_dir/github-release-only-output.txt"; then
+  echo "GitHub-release-only probe incorrectly skipped the changed manifest." >&2
+  exit 1
+fi
 test "$(jq -r '.sources.windows.architectures.arm64.packageMoniker' "$tmp_dir/probe-manifest.json")" = "$current_arm64_package"
 test "$(jq -r '.sources.windows.architectures.arm64.downloadable' "$tmp_dir/probe-manifest.json")" = "false"
 
