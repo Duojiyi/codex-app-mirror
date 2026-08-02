@@ -1237,7 +1237,12 @@ else
           release_tag_fallback="$latest_tag"
           skip_reason="latest release $latest_tag matches current sources, but public mirror aliases or appcasts are stale; republishing"
         fi
-      elif public_mirror_latest_matches "$manifest_path" "$latest_tag"; then
+      # GitHub-only publishing deliberately has no external `latest/*` alias to
+      # inspect. In that mode, `public_mirror_latest_matches` short-circuits for
+      # the equal-manifest repair case above; it must not be allowed to turn a
+      # changed source manifest into a no-op. Otherwise every post-migration
+      # update is silently suppressed until someone dispatches `force_release`.
+      elif [[ "${GITHUB_RELEASE_ONLY:-false}" != "true" ]] && public_mirror_latest_matches "$manifest_path" "$latest_tag"; then
         should_release="false"
         skip_reason="public mirror latest already matches current sources; GitHub latest remains $latest_tag until all architectures are complete"
       fi
