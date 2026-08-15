@@ -4,6 +4,15 @@ The `Update Download Stats` workflow maintains the cumulative download count in
 Cloudflare R2. Its credentials are intentionally scoped to the GitHub
 `download-stats` environment instead of being shared with every repository job.
 
+## Enablement
+
+Scheduled runs are opt-in so that mirrors and development copies do not fail
+or write to production infrastructure they do not own. Create the repository
+variable `DOWNLOAD_STATS_ENABLED` with the value `true` only after the R2
+bucket, environment variable, and environment secrets below are configured.
+An unset value or `false` skips scheduled runs. Manual runs are always allowed
+and execute the configuration preflight.
+
 ## Required environment configuration
 
 Configure the `download-stats` environment in **Settings → Environments**.

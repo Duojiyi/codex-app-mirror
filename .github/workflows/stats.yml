@@ -21,6 +21,10 @@ env:
 
 jobs:
   stats:
+    # Mirrors and development copies do not own the production R2 bucket. Keep
+    # scheduled runs off until the repository has explicitly opted in; manual
+    # runs still execute the preflight so configuration can be verified.
+    if: github.event_name == 'workflow_dispatch' || vars.DOWNLOAD_STATS_ENABLED == 'true'
     name: Update cumulative download badge
     # Scope Cloudflare/R2 credentials to this job instead of every workflow in
     # the repository. The environment is restricted to the main branch.
