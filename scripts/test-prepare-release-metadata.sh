@@ -175,6 +175,9 @@ JSON
 (
   cd "$tmp_dir"
 
+  GITHUB_RELEASE_ONLY=true \
+  GITHUB_REPOSITORY=Duojiyi/codex-app-mirror \
+  GITHUB_SERVER_URL=https://github.com \
   WINDOWS_APP_VERSION=1.2.3 "$repo_root/scripts/prepare-release-metadata.sh" \
     probe-manifest.json \
     macos-metadata.json \
@@ -192,23 +195,28 @@ JSON
   grep -F 'include_macos_x64=true' output.txt
   grep -F 'prerelease=false' output.txt
   grep -F 'publish_latest=true' output.txt
-  grep -F 'sync_latest=true' output.txt
+  grep -F 'sync_latest=false' output.txt
   grep -F 'Codex-mac-arm64.dmg' SHA256SUMS.txt
   grep -F 'Codex-darwin-x64-1.2.3.zip' SHA256SUMS.txt
   grep -F 'OpenAI.Codex_1.2.3.4_x64__2p2nqsd0c76g0.Msix' SHA256SUMS.txt
   grep -F 'OpenAI.Codex_1.2.3.4_arm64__2p2nqsd0c76g0.Msix' SHA256SUMS.txt
   grep -F 'OpenAI.Codex_1.2.3.4_arm64__2p2nqsd0c76g0.Msix' latest-SHA256SUMS.txt
-  grep -F '![Codex App Mirror](https://github.com/Wangnov/codex-app-mirror/releases/latest/download/status.png)' release-notes.md
+  grep -F '![Codex App Mirror](https://github.com/Duojiyi/codex-app-mirror/releases/download/codex-app-1.2.3/status.png)' release-notes.md
   grep -F '| Windows x64 | `1.2.3` | `0.1.2` | `1.2.3.4` |' release-notes.md
   grep -F '| Windows ARM64 | `1.2.3` | `0.1.3` | `1.2.3.4` |' release-notes.md
-  grep -F 'Windows x64: https://example.com/latest/win-x64' release-notes.md
+  grep -F 'Windows x64: [`OpenAI.Codex_1.2.3.4_x64__2p2nqsd0c76g0.Msix`](https://github.com/Duojiyi/codex-app-mirror/releases/download/codex-app-1.2.3/OpenAI.Codex_1.2.3.4_x64__2p2nqsd0c76g0.Msix)' release-notes.md
   test "$(jq -r '.sources.windows.backendVersion' release-manifest.json)" = "0.1.2"
   test "$(jq -r '.sources.windows.architectures.x64.backendVersion' release-manifest.json)" = "0.1.2"
   test "$(jq -r '.sources.windows.architectures.arm64.backendVersion' release-manifest.json)" = "0.1.3"
   test "$(jq -r '.derived.windowsBackendVersion' release-manifest.json)" = "0.1.2"
   test "$(jq -r '.derived.windowsArm64BackendVersion' release-manifest.json)" = "0.1.3"
   grep -F '| macOS Apple Silicon | `1.2.3` | `0.140.1` | build `5` |' release-notes.md
-  grep -F 'These latest links roll forward per architecture:' release-notes.md
+  grep -F '以上链接固定指向本次 GitHub Release' release-notes.md
+  grep -F 'These links point to the assets in this GitHub Release' release-notes.md
+  if grep -F 'latest/win-x64' release-notes.md; then
+    echo "GitHub-only release notes must not contain R2 latest links." >&2
+    exit 1
+  fi
   test "$(jq -r '.schemaVersion' release-manifest.json)" = "5"
   test "$(jq -r '.sources.macos.arm64.appcast.sourceBasename' release-manifest.json)" = "ChatGPT-darwin-arm64-1.2.3.zip"
   test "$(jq -r '.sources.macos.arm64.appcast.mirrorEnclosureBasename' release-manifest.json)" = "Codex-darwin-arm64-1.2.3.zip"

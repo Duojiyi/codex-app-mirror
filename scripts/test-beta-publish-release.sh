@@ -136,7 +136,7 @@ publish() {
   env \
     PATH="$tmp_dir/bin:$PATH" \
     GH_TOKEN=fixture \
-    GH_REPO=Wangnov/codex-app-mirror \
+    GH_REPO=Duojiyi/codex-app-mirror \
     GH_MOCK_STATE="$tmp_dir/release-state.json" \
     GH_MOCK_LOG="$tmp_dir/gh.log" \
     GITHUB_SHA=fixture-sha \

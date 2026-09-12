@@ -13,7 +13,7 @@ on:
         type: string
 
 permissions:
-  contents: read
+  contents: write
 
 env:
   BETA_PRODUCT_ID: 9N8CJ4W95TBZ
@@ -198,6 +198,14 @@ jobs:
             release-manifest.json \
             SHA256SUMS.txt \
             artifacts
+
+      - name: Verify Beta GitHub Release asset URLs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: codex-app-beta-win-${{ inputs.expected_windows_package_version }}-mac-${{ inputs.expected_macos_version }}
+        shell: bash
+        run: bash scripts/verify-github-release-assets.sh "$RELEASE_TAG" SHA256SUMS.txt
 
       - name: Verify prerelease and prove GitHub Latest was untouched
         env:

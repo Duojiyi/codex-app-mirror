@@ -6,7 +6,23 @@ macos_metadata="${2:-artifacts/codex-macos/macos-metadata.json}"
 artifacts_dir="${3:-artifacts}"
 r2_public_base_url="${4:-https://codexapp.agentsmirror.com}"
 release_tag_override="${5:-}"
+github_release_only="${GITHUB_RELEASE_ONLY:-false}"
+github_server_url="${GITHUB_SERVER_URL:-https://github.com}"
+github_repository="${GITHUB_REPOSITORY:-Duojiyi/codex-app-mirror}"
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+case "$github_release_only" in
+  true|false) ;;
+  *)
+    echo "GITHUB_RELEASE_ONLY must be true or false, got '$github_release_only'." >&2
+    exit 1
+    ;;
+esac
+
+if [[ "$github_release_only" == "true" && -z "$github_repository" ]]; then
+  echo "GITHUB_REPOSITORY is required when GITHUB_RELEASE_ONLY=true." >&2
+  exit 1
+fi
 
 require() {
   if ! command -v "$1" >/dev/null 2>&1; then
@@ -134,6 +150,27 @@ json_backend_version() {
   else
     printf ''
   fi
+}
+
+urlencode_path_segment() {
+  python3 - "$1" <<'PY'
+from urllib.parse import quote
+import sys
+
+print(quote(sys.argv[1], safe="-._~"))
+PY
+}
+
+github_asset_url() {
+  local asset="$1"
+
+  printf '%s/%s' "$github_release_base_url" "$(urlencode_path_segment "$asset")"
+}
+
+github_asset_link() {
+  local asset="$1"
+
+  printf '[`%s`](%s)' "$asset" "$(github_asset_url "$asset")"
 }
 require find
 require jq
@@ -410,7 +447,11 @@ else
   publish_latest=false
   platform_completeness="partial"
 fi
-sync_latest=true
+if [[ "$github_release_only" == "true" ]]; then
+  sync_latest=false
+else
+  sync_latest=true
+fi
 
 canonical_tag="codex-app-$(sanitize_tag_part "$codex_version")"
 if [[ -n "$release_tag_override" ]]; then
@@ -424,6 +465,7 @@ else
   tag="$canonical_tag"
 fi
 validate_release_tag "$tag"
+github_release_base_url="${github_server_url%/}/${github_repository}/releases/download/$(urlencode_path_segment "$tag")"
 
 title="Codex App Mirror $codex_version"
 published_at="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
@@ -728,7 +770,7 @@ mv "$tmp_manifest" release-manifest.json
 
 {
   echo "<!-- release-banner:start -->"
-  echo "![Codex App Mirror](https://github.com/Wangnov/codex-app-mirror/releases/latest/download/status.png)"
+  echo "![Codex App Mirror]($(github_asset_url status.png))"
   echo "<!-- release-banner:end -->"
   echo
   echo "# Codex App 安装包镜像更新"
@@ -805,7 +847,28 @@ mv "$tmp_manifest" release-manifest.json
   echo
   echo "本仓库以 Codex 内部版本聚合平台安装包；Windows MSIX 的四段包版本会单独列在“平台包 / build”列。"
   echo
-  if [[ "$sync_latest" == "true" ]]; then
+  if [[ "$github_release_only" == "true" ]]; then
+    echo "<!-- github-release-links-cn:start -->"
+    echo "## 本次 Release 下载"
+    echo
+    if [[ "$include_windows_x64" == "true" ]]; then
+      echo "- Windows x64: $(github_asset_link "${windows_package}.Msix")"
+    fi
+    if [[ "$include_windows_arm64" == "true" && -n "$windows_arm64_package" ]]; then
+      echo "- Windows ARM64: $(github_asset_link "${windows_arm64_package}.Msix")"
+    fi
+    if [[ "$include_macos_arm64" == "true" ]]; then
+      echo "- Apple Silicon Mac: $(github_asset_link Codex-mac-arm64.dmg)"
+    fi
+    if [[ "$include_macos_x64" == "true" ]]; then
+      echo "- Intel Mac: $(github_asset_link Codex-mac-x64.dmg)"
+    fi
+    echo "- 校验和: $(github_asset_link SHA256SUMS.txt)"
+    echo "- Manifest: $(github_asset_link release-manifest.json)"
+    echo
+    echo "以上链接固定指向本次 GitHub Release；未纳入本次版本的架构不会出现在下载列表中。"
+    echo "<!-- github-release-links-cn:end -->"
+  elif [[ "$sync_latest" == "true" ]]; then
     echo "<!-- latest-links-cn:start -->"
     echo "## 最新版快速下载"
     echo
@@ -911,7 +974,28 @@ mv "$tmp_manifest" release-manifest.json
   echo
   echo "This mirror groups platform installers by the Codex app's internal version; the four-part Windows MSIX package version is listed separately in the platform package / build column."
   echo
-  if [[ "$sync_latest" == "true" ]]; then
+  if [[ "$github_release_only" == "true" ]]; then
+    echo "<!-- github-release-links-en:start -->"
+    echo "## Downloads from this Release"
+    echo
+    if [[ "$include_windows_x64" == "true" ]]; then
+      echo "- Windows x64: $(github_asset_link "${windows_package}.Msix")"
+    fi
+    if [[ "$include_windows_arm64" == "true" && -n "$windows_arm64_package" ]]; then
+      echo "- Windows ARM64: $(github_asset_link "${windows_arm64_package}.Msix")"
+    fi
+    if [[ "$include_macos_arm64" == "true" ]]; then
+      echo "- Apple Silicon Mac: $(github_asset_link Codex-mac-arm64.dmg)"
+    fi
+    if [[ "$include_macos_x64" == "true" ]]; then
+      echo "- Intel Mac: $(github_asset_link Codex-mac-x64.dmg)"
+    fi
+    echo "- Checksums: $(github_asset_link SHA256SUMS.txt)"
+    echo "- Manifest: $(github_asset_link release-manifest.json)"
+    echo
+    echo "These links point to the assets in this GitHub Release; platforms not included in this version are omitted."
+    echo "<!-- github-release-links-en:end -->"
+  elif [[ "$sync_latest" == "true" ]]; then
     echo "<!-- latest-links-en:start -->"
     echo "## Latest quick downloads"
     echo
