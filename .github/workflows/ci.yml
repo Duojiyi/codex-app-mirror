@@ -64,7 +64,7 @@ jobs:
 
       - name: Test GitHub Release asset URL verifier fixture
         shell: bash
-        run: scripts/test-verify-github-release-assets.sh
+        run: bash scripts/test-verify-github-release-assets.sh
 
       - name: Test current-local artifact marker semantics
         shell: bash
