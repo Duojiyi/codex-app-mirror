@@ -15,7 +15,7 @@
   // to the kit worker's src/ and running `npx wrangler deploy` there.
   // The instance dispatches mirror.yml for codex-app-mirror and agents-cli-mirror.
   "vars": {
-    "DISPATCH_TARGETS": "[{\"owner\":\"Wangnov\",\"repo\":\"codex-app-mirror\",\"inputs\":{\"force_release\":\"false\"}},{\"owner\":\"Wangnov\",\"repo\":\"agents-cli-mirror\"}]"
+    "DISPATCH_TARGETS": "[{\"owner\":\"Duojiyi\",\"repo\":\"codex-app-mirror\",\"inputs\":{\"force_release\":\"false\"}},{\"owner\":\"Wangnov\",\"repo\":\"agents-cli-mirror\"}]"
   },
   "secrets": {
     "required": ["GITHUB_TOKEN"]

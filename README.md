@@ -15,15 +15,15 @@
 
 <p align="center">
   <a href="https://codexapp.agentsmirror.com"><img src="https://img.shields.io/badge/website-codexapp.agentsmirror.com-7c83ff" alt="Official website"></a>
-  <a href="https://github.com/Wangnov/codex-app-mirror/releases/latest"><img src="https://img.shields.io/endpoint?url=https://codexapp.agentsmirror.com/stats/downloads.json" alt="R2 cumulative installer downloads"></a>
-  <a href="https://github.com/Wangnov/codex-app-mirror/stargazers"><img src="https://img.shields.io/github/stars/Wangnov/codex-app-mirror?logo=github&label=stars&color=f5c518" alt="GitHub stars"></a>
-  <a href="https://github.com/Wangnov/codex-app-mirror/releases/latest"><img src="https://img.shields.io/github/release-date/Wangnov/codex-app-mirror?label=updated&logo=github" alt="Latest update time"></a>
-  <a href="https://github.com/Wangnov/codex-app-mirror/actions/workflows/mirror.yml"><img src="https://img.shields.io/github/actions/workflow/status/Wangnov/codex-app-mirror/mirror.yml?branch=main&label=mirror&logo=githubactions" alt="Mirror workflow"></a>
-  <a href="https://github.com/Wangnov/codex-app-mirror/actions/workflows/mirror.yml"><img src="https://img.shields.io/badge/probe-every%2015%20min-2ea44f" alt="Probe every 15 minutes"></a>
-  <a href="https://github.com/Wangnov/codex-app-mirror/releases/latest"><img src="https://img.shields.io/badge/macOS-Sparkle%20auto--update-brightgreen?logo=apple" alt="macOS Sparkle auto-update"></a>
+  <a href="https://github.com/Duojiyi/codex-app-mirror/releases/latest"><img src="https://img.shields.io/endpoint?url=https://codexapp.agentsmirror.com/stats/downloads.json" alt="R2 cumulative installer downloads"></a>
+  <a href="https://github.com/Duojiyi/codex-app-mirror/stargazers"><img src="https://img.shields.io/github/stars/Duojiyi/codex-app-mirror?logo=github&label=stars&color=f5c518" alt="GitHub stars"></a>
+  <a href="https://github.com/Duojiyi/codex-app-mirror/releases/latest"><img src="https://img.shields.io/github/release-date/Duojiyi/codex-app-mirror?label=updated&logo=github" alt="Latest update time"></a>
+  <a href="https://github.com/Duojiyi/codex-app-mirror/actions/workflows/mirror.yml"><img src="https://img.shields.io/github/actions/workflow/status/Duojiyi/codex-app-mirror/mirror.yml?branch=main&label=mirror&logo=githubactions" alt="Mirror workflow"></a>
+  <a href="https://github.com/Duojiyi/codex-app-mirror/actions/workflows/mirror.yml"><img src="https://img.shields.io/badge/probe-every%2015%20min-2ea44f" alt="Probe every 15 minutes"></a>
+  <a href="https://github.com/Duojiyi/codex-app-mirror/releases/latest"><img src="https://img.shields.io/badge/macOS-Sparkle%20auto--update-brightgreen?logo=apple" alt="macOS Sparkle auto-update"></a>
   <a href="https://apps.microsoft.com/detail/9plm9xgg6vks"><img src="https://img.shields.io/badge/Microsoft%20Store-9PLM9XGG6VKS-0078d4?logo=microsoftstore" alt="Microsoft Store ProductId 9PLM9XGG6VKS"></a>
-  <a href="https://github.com/Wangnov/codex-app-mirror/releases/latest"><img src="https://img.shields.io/badge/macOS-arm64%20%7C%20x64-000000?logo=apple" alt="macOS arm64 and x64"></a>
-  <a href="./LICENSE"><img src="https://img.shields.io/github/license/Wangnov/codex-app-mirror?color=blue" alt="MIT License"></a>
+  <a href="https://github.com/Duojiyi/codex-app-mirror/releases/latest"><img src="https://img.shields.io/badge/macOS-arm64%20%7C%20x64-000000?logo=apple" alt="macOS arm64 and x64"></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/github/license/Duojiyi/codex-app-mirror?color=blue" alt="MIT License"></a>
 </p>
 
 <p align="center">
@@ -59,7 +59,7 @@
 
 # 中文
 
-`codex-app-mirror` 是面向 OpenAI Codex 桌面应用的安装包镜像与分发项目，用于在 Microsoft Store 或官方下载不便时提供稳定且可校验的获取渠道。项目仅做镜像，不构建、不修改、不重打包 Codex：按版本探测结果将官方来源的 Windows MSIX 与 macOS DMG 原样发布到 GitHub Release，并经 CDN 短链分发。macOS 端另提供 Sparkle 增量更新 appcast，由下游 [Codex App Manager](#cn-ecosystem) 客户端消费。
+`codex-app-mirror` 是面向 OpenAI Codex 桌面应用的安装包镜像与分发项目，用于在 Microsoft Store 或官方下载不便时提供稳定且可校验的获取渠道。项目仅做镜像，不构建、不修改、不重打包 Codex：按版本探测结果将官方来源的 Windows MSIX 与 macOS DMG 原样发布到 GitHub Release；启用 secondary sync 时，再通过生产 CDN 短链分发。macOS 端另提供 Sparkle 增量更新 appcast，由下游 [Codex App Manager](#cn-ecosystem) 客户端消费。
 
 ## 能力一览
 
@@ -68,18 +68,20 @@
 | 🪟 **Windows MSIX** | 直接镜像 Microsoft Store 包，x64 稳定发布，ARM64 纳入 manifest 与镜像路径 |
 | 🍎 **macOS DMG** | Apple Silicon + Intel 双架构，官方原包，零改动 |
 | 🔄 **增量自动更新** | macOS Sparkle appcast + delta 差量包，pinned EdDSA 签名字节级保真 |
-| 🌏 **国内可达** | Cloudflare R2 全球节点 + 中国大陆自动分流到 S3 副镜像，同一条短链全自动选路 |
+| 🌏 **国内可达** | 可选 Cloudflare R2 全球节点 + 中国大陆 S3 副镜像；启用 secondary sync 后由生产短链自动选路 |
 | ⏱️ **15 分钟探测** | Cloudflare Cron 主调度 + GitHub Actions 6 小时兜底，上游一变就发版 |
 | 🔐 **可校验** | 每个 Release 附 `SHA256SUMS.txt` 与 `release-manifest.json` 上游指纹 |
 
 ## 下载与安装
 
-打开 [最新 GitHub Release](https://github.com/Wangnov/codex-app-mirror/releases/latest)，下载你的平台对应文件：
+打开 [最新 GitHub Release](https://github.com/Duojiyi/codex-app-mirror/releases/latest)，下载你的平台对应文件：
 
 - **Windows x64**：`OpenAI.Codex_..._x64__2p2nqsd0c76g0.Msix`
 - **Windows ARM64**：`OpenAI.Codex_..._arm64__2p2nqsd0c76g0.Msix`（当官方下载 URL 已解析时发布）
 - **Apple Silicon Mac**：`Codex-mac-arm64.dmg`
 - **Intel Mac**：`Codex-mac-x64.dmg`
+
+GitHub Release 资产链接固定绑定具体 `tag`，适合历史版本下载与完整性校验，不会随 GitHub 的 `latest` 指针改变。
 
 或直接使用 CDN 短链（推荐，**自动按你的网络选最优节点**——国内走 S3 副镜像，海外走 R2，只保留当前最新版）：
 
@@ -93,7 +95,7 @@
 | 校验和 | <https://codexapp.agentsmirror.com/latest/checksums> |
 | Release 指纹 | <https://codexapp.agentsmirror.com/latest/manifest> |
 
-需要**历史版本**时，到 [GitHub Releases](https://github.com/Wangnov/codex-app-mirror/releases) 按 release/tag 查找；短链只指向最新版。建议同时下载 `SHA256SUMS.txt` 核对文件完整性。
+需要**历史版本**时，到 [GitHub Releases](https://github.com/Duojiyi/codex-app-mirror/releases) 按 release/tag 查找；短链只指向最新版。建议同时下载 `SHA256SUMS.txt` 核对文件完整性。
 
 ## macOS 自动更新
 
@@ -114,16 +116,13 @@ macOS 版除了手动下载 DMG，还支持 **Sparkle 增量自动更新**。下
 - **macOS**：对官方 DMG 与 appcast 发请求，读取 `ETag` / `Last-Modified` / `Content-Length` 与 appcast 版本字段
 - **比对**：与最新 Release 的 `release-manifest.json` 做稳定字段比较
 
-没有变化就在探测阶段结束，不下载、不发重复 Release。任一平台有变化，则下载所有可下载的安装包、生成校验和与 manifest、构建 Sparkle appcast，发布新的 GitHub Release。
+没有变化就在探测阶段结束，不下载、不发重复 Release。任一平台有变化，则下载所有可下载的安装包、生成校验和与 manifest，并发布新的 GitHub Release；启用 secondary sync 时，再构建 Sparkle appcast 并同步生产 CDN。
 
-### 双层镜像 + 按地域分流
+### GitHub Release 与生产 CDN
 
-发布后，资产会同步到两套镜像，由一个 Cloudflare Worker 路由：
+GitHub Release 是固定 tag 的版本化下载渠道；Release notes 中的下载链接直接指向本次 Release 资产，适合历史版本与完整性校验，不依赖 `releases/latest/download` 的浮动指针。
 
-- **全球**：Cloudflare R2（`codexapp-r2.agentsmirror.com`）
-- **中国大陆**：S3 副镜像，通过预签名 URL 下发
-
-路由器读取请求的 `CF-IPCountry`，把中国大陆访客分流到 S3 副镜像，其余走 R2——**对用户透明，同一条短链全自动选路**。
+`https://codexapp.agentsmirror.com/latest/*` 是独立的生产 CDN 短链。只有仓库变量 `ENABLE_SECONDARY_SYNC=true` 时，发布 workflow 才会把资产同步到 Cloudflare R2，并由生产路由按地域选择 R2 或中国大陆 S3 副镜像；未启用时，GitHub Release 仍可独立使用，本仓库 workflow 不会更新这些 `latest/*` 对象。
 
 ### 调度
 
@@ -149,7 +148,7 @@ codex-app-26.623.41415
 Codex App Mirror 26.623.41415
 ```
 
-当某个平台尚未发布同一内部版本时，会先创建该内部版本的 prerelease，并在 body 的“版本与发布时间”表格中把缺失平台标记为待官方发布。已发布的架构会立即推进 R2/S3 `latest/*` 短链；尚未发布该版本的架构会继续指向它自己的当前 latest。四个架构补齐后，同一个 Release 会被补全并提升为正式 latest。
+当某个平台尚未发布同一内部版本时，会先创建该内部版本的 prerelease，并在 body 的“版本与发布时间”表格中把缺失平台标记为待官方发布。启用 secondary sync 时，已发布的架构会立即推进 R2/S3 `latest/*` 短链；尚未发布该版本的架构会继续指向它自己的当前 latest。四个架构补齐后，同一个 Release 会被补全并提升为正式 latest。
 
 Windows x64 是 Windows 平台的必需包；Windows ARM64 是可选架构。如果 Microsoft Store 在探测和下载之间发生 ARM64 rollout 漂移，本轮会跳过本地 ARM64 上传，并保留上一份校验匹配的 `latest/win-arm64`；后续探测到稳定包时再补上。
 
@@ -203,10 +202,10 @@ Windows MSIX 使用 Microsoft Store metadata 解析：
 ## Star History
 
 <p align="center">
-  <a href="https://star-history.com/#Wangnov/codex-app-mirror&Date">
+  <a href="https://star-history.com/#Duojiyi/codex-app-mirror&Date">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Wangnov/codex-app-mirror&type=Date&theme=dark" />
-      <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Wangnov/codex-app-mirror&type=Date" width="75%" />
+      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Duojiyi/codex-app-mirror&type=Date&theme=dark" />
+      <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Duojiyi/codex-app-mirror&type=Date" width="75%" />
     </picture>
   </a>
 </p>
@@ -221,7 +220,7 @@ Windows MSIX 使用 Microsoft Store metadata 解析：
 
 # English
 
-`codex-app-mirror` is an installer mirror and distribution project for the OpenAI Codex desktop app, providing a stable, verifiable way to obtain it when the Microsoft Store or official downloads are inconvenient. The project only mirrors — it does not build, modify, or repackage Codex: it publishes the official Windows MSIX and macOS DMG verbatim to GitHub Releases based on version probing, and serves them over CDN short links. For macOS it also provides a Sparkle incremental-update appcast, consumed by the downstream [Codex App Manager](#en-ecosystem) client.
+`codex-app-mirror` is an installer mirror and distribution project for the OpenAI Codex desktop app, providing a stable, verifiable way to obtain it when the Microsoft Store or official downloads are inconvenient. The project only mirrors — it does not build, modify, or repackage Codex: it publishes the official Windows MSIX and macOS DMG verbatim to GitHub Releases based on version probing; when secondary sync is enabled, it also serves them over production CDN short links. For macOS it also provides a Sparkle incremental-update appcast, consumed by the downstream [Codex App Manager](#en-ecosystem) client.
 
 ## At a glance
 
@@ -230,18 +229,20 @@ Windows MSIX 使用 Microsoft Store metadata 解析：
 | 🪟 **Windows MSIX** | Mirrored from the Microsoft Store package: x64 is published, ARM64 is tracked in the manifest and mirror paths |
 | 🍎 **macOS DMG** | Apple Silicon + Intel, official packages, unmodified |
 | 🔄 **Incremental auto-update** | macOS Sparkle appcast + delta enclosures, pinned EdDSA signatures kept byte-for-byte |
-| 🌏 **Reachable in China** | Cloudflare R2 globally + auto-failover to an S3 mirror for mainland China; one link, auto-routed |
+| 🌏 **Reachable in China** | Optional Cloudflare R2 globally + an S3 mirror for mainland China; production short links auto-route when secondary sync is enabled |
 | ⏱️ **15-minute probe** | Cloudflare Cron primary + GitHub Actions 6-hour fallback; releases only when upstream changes |
 | 🔐 **Verifiable** | Every release ships `SHA256SUMS.txt` and a `release-manifest.json` of upstream fingerprints |
 
 ## Download & install
 
-Open the [latest GitHub Release](https://github.com/Wangnov/codex-app-mirror/releases/latest) and grab your platform's asset:
+Open the [latest GitHub Release](https://github.com/Duojiyi/codex-app-mirror/releases/latest) and grab your platform's asset:
 
 - **Windows x64**: `OpenAI.Codex_..._x64__2p2nqsd0c76g0.Msix`
 - **Windows ARM64**: `OpenAI.Codex_..._arm64__2p2nqsd0c76g0.Msix` (published when the official download URL resolves)
 - **Apple Silicon Mac**: `Codex-mac-arm64.dmg`
 - **Intel Mac**: `Codex-mac-x64.dmg`
+
+GitHub Release asset links are fixed to a concrete `tag`, making them suitable for older-version downloads and integrity checks; they do not move with GitHub's `latest` pointer.
 
 Or use the CDN short links (recommended — **auto-routed to the fastest node**: mainland China via the S3 mirror, elsewhere via R2; latest version only):
 
@@ -255,7 +256,7 @@ Or use the CDN short links (recommended — **auto-routed to the fastest node**:
 | Checksums | <https://codexapp.agentsmirror.com/latest/checksums> |
 | Release manifest | <https://codexapp.agentsmirror.com/latest/manifest> |
 
-For **older versions**, browse [GitHub Releases](https://github.com/Wangnov/codex-app-mirror/releases) by release/tag — the short links only point at the latest. Download `SHA256SUMS.txt` too if you want to verify integrity.
+For **older versions**, browse [GitHub Releases](https://github.com/Duojiyi/codex-app-mirror/releases) by release/tag — the short links only point at the latest. Download `SHA256SUMS.txt` too if you want to verify integrity.
 
 ## macOS auto-update
 
@@ -276,16 +277,13 @@ Each run starts with a lightweight probe and only downloads/releases when upstre
 - **macOS**: request the official DMGs and appcast, read `ETag` / `Last-Modified` / `Content-Length` and appcast version fields
 - **Compare**: diff those stable fields against the latest release's `release-manifest.json`
 
-No change → it stops after the probe. Any platform changes → it downloads every downloadable installer, writes checksums + manifest, builds the Sparkle appcasts, and publishes a new GitHub Release.
+No change → it stops after the probe. Any platform changes → it downloads every downloadable installer, writes checksums + manifest, and publishes a new GitHub Release; when secondary sync is enabled, it also builds the Sparkle appcasts and syncs the production CDN.
 
-### Two-tier mirror + geo routing
+### GitHub Releases and the production CDN
 
-After release, assets sync to two mirrors fronted by a Cloudflare Worker:
+GitHub Releases are the versioned, fixed-tag download channel; the links in each release's notes point directly to that Release's assets, making them suitable for older versions and integrity checks without relying on the moving `releases/latest/download` pointer.
 
-- **Global**: Cloudflare R2 (`codexapp-r2.agentsmirror.com`)
-- **Mainland China**: an S3 mirror served via presigned URLs
-
-The router reads `CF-IPCountry` and sends mainland-China visitors to the S3 mirror, everyone else to R2 — transparent to users, one short link, auto-routed.
+`https://codexapp.agentsmirror.com/latest/*` is an independent production CDN route. Only when the repository variable `ENABLE_SECONDARY_SYNC=true` does the release workflow sync assets to Cloudflare R2 and let the production router choose between R2 and the mainland-China S3 mirror; GitHub Releases remain usable on their own, and this repository's workflow does not update those `latest/*` objects when secondary sync is disabled.
 
 ### Scheduling
 
@@ -311,7 +309,7 @@ codex-app-26.623.41415
 Codex App Mirror 26.623.41415
 ```
 
-If one platform has not yet published the same internal version, the mirror creates a prerelease for that internal version and marks the missing platform as waiting in the "Versions and publish times" table. Architectures that have shipped immediately advance the R2/S3 `latest/*` short links; architectures that have not shipped that version keep pointing at their own current latest package. Once all four architectures arrive, the same Release is completed and promoted to latest.
+If one platform has not yet published the same internal version, the mirror creates a prerelease for that internal version and marks the missing platform as waiting in the "Versions and publish times" table. When secondary sync is enabled, architectures that have shipped immediately advance the R2/S3 `latest/*` short links; architectures that have not shipped that version keep pointing at their own current latest package. Once all four architectures arrive, the same Release is completed and promoted to latest.
 
 Windows x64 is the required Windows package; Windows ARM64 is an optional architecture. If the Microsoft Store ARM64 rollout drifts between probe and download, that run skips the local ARM64 upload and preserves the previous checksum-matching `latest/win-arm64`; it is replaced once a stable ARM64 package is detected.
 
@@ -350,10 +348,10 @@ The Windows MSIX is resolved from Microsoft Store metadata (DisplayCatalog → F
 ## Star History
 
 <p align="center">
-  <a href="https://star-history.com/#Wangnov/codex-app-mirror&Date">
+  <a href="https://star-history.com/#Duojiyi/codex-app-mirror&Date">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Wangnov/codex-app-mirror&type=Date&theme=dark" />
-      <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Wangnov/codex-app-mirror&type=Date" width="75%" />
+      <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Duojiyi/codex-app-mirror&type=Date&theme=dark" />
+      <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Duojiyi/codex-app-mirror&type=Date" width="75%" />
     </picture>
   </a>
 </p>

@@ -16,11 +16,11 @@ on:
     - cron: "11 */6 * * *"
 
 permissions:
-  contents: read
+  contents: write
 
 env:
-  GITHUB_RELEASE_ONLY: "true"
-  R2_PUBLIC_BASE_URL: https://github.com/Duojiyi/codex-app-mirror/releases/latest/download
+  GITHUB_RELEASE_ONLY: ${{ vars.ENABLE_SECONDARY_SYNC != 'true' }}
+  R2_PUBLIC_BASE_URL: https://codexapp.agentsmirror.com
 
 concurrency:
   group: codex-app-mirror
@@ -345,7 +345,7 @@ jobs:
             "$RELEASE_TAG"
 
       - name: Build macOS Sparkle appcasts
-        if: steps.meta.outputs.sync_latest == 'true'
+        if: ${{ vars.ENABLE_SECONDARY_SYNC == 'true' && steps.meta.outputs.sync_latest == 'true' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -568,6 +568,14 @@ jobs:
             fi
             gh release create "$RELEASE_TAG" "${create_args[@]}" "${release_assets[@]}"
           fi
+
+      - name: Verify GitHub Release asset URLs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ steps.meta.outputs.tag }}
+        shell: bash
+        run: bash scripts/verify-github-release-assets.sh "$RELEASE_TAG" SHA256SUMS.txt
 
       - name: Remove latest links from previous release notes
         if: ${{ vars.ENABLE_SECONDARY_SYNC == 'true' }}
